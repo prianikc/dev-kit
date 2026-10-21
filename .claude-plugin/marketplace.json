@@ -1,0 +1,6 @@
+{
+  "name": "dev-kit",
+  "owner": { "name": "prianikc" },
+  "description": "dev-kit — личные инструменты разработки для Claude Code",
+  "plugins": [{ "name": "dev-kit", "source": ".", "description": "git-команды и скиллы процесса разработки; дополняет review-kit" }]
+}

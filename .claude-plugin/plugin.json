@@ -1,0 +1,7 @@
+{
+  "name": "dev-kit",
+  "version": "1.0.0",
+  "description": "Личные инструменты разработки: git-команды (/commit, /push, /merge, /gsync, /main, /confl) и скиллы процесса (брейншторм, план, исполнение, ревью кода) — дополнение к review-kit",
+  "author": { "name": "prianikc" },
+  "types": "./types/index.d.ts"
+}
