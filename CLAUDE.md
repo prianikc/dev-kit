@@ -8,7 +8,7 @@
 | `hooks/hooks.json` | подключает мод `mod/register.ts` |
 | `mod/register.ts` | учёт файлов сессии (Edit/Write) и их список в промпте `/commit` |
 | `mod/session.ts` | чистые функции учёта |
-| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `confl`) и скиллы процесса из superpowers (`NOTICE.md`) |
+| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `cleanup`, `confl`) и скиллы процесса из superpowers (`NOTICE.md`) |
 
 ## Правила
 
@@ -19,5 +19,8 @@
 
 ## Проверка
 
-- Тесты: `node --test 'mod/**/*.test.ts'`. Валидация: `claude plugin validate .`.
-- Каждый пуш в `main`, меняющий плагин, поднимает `version` в `.claude-plugin/plugin.json`.
+- Тесты: `node --test 'mod/**/*.test.ts' '.github/scripts/*.test.mjs'`. Валидация: `claude plugin validate .`.
+- `version` в `.claude-plugin/plugin.json` поднимает CI после мержа в `main`, если менялись файлы плагина: patch, а с
+  меткой PR `minor` / `major` — их. Вручную в PR — только когда нужна своя; уменьшать нельзя.
+- CI (`.github/workflows/ci.yml`): на PR и пуш в `main` — тесты, валидация, проверка `version`; после пуша в `main` —
+  коммит новой `version` (`.github/scripts/release-version.mjs`), тег `vX.Y.Z` и GitHub Release.

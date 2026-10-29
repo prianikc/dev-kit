@@ -24,7 +24,7 @@ update a branch other than the current one — `/main` switches to the default b
    - «отстаёт на N» — behind origin; for the default branch add «— /main»;
    - «впереди на N — /push» — local commits not pushed;
    - «разошлась (+A/−B) — разберитесь вручную» — ahead and behind: someone rewrote one side;
-   - «удалена на origin — удалите сами (`git branch -d <имя>`)» — track `[gone]`;
+   - «удалена на origin — /cleanup» — track `[gone]`;
    - «без upstream»;
    - «не обновлена: <reason>» — the current branch whose fast-forward git refused.
    For the current branch (when it is not the default) append how it stands against `origin/<default>`
