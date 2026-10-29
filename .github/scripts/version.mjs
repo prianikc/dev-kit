@@ -1,23 +1,29 @@
 export const PLUGIN_PATHS = ['.claude-plugin/', 'hooks/', 'mod/', 'skills/', 'types/']
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/
-const LISTED = 3
+const BUMPS = ['major', 'minor', 'patch']
 
 function parts(version) {
   const match = SEMVER.exec(version)
   return match ? match.slice(1).map(Number) : null
 }
 
-function greater(after, before) {
-  const index = after.findIndex((value, i) => value !== before[i])
-  return index >= 0 && after[index] > before[index]
+function compare(a, b) {
+  const index = a.findIndex((value, i) => value !== b[i])
+  return index < 0 ? 0 : a[index] - b[index]
 }
 
-export function versionProblem({ changed, before, after }) {
-  const plugin = changed.filter(path => PLUGIN_PATHS.some(prefix => path.startsWith(prefix)))
-  if (plugin.length === 0) return null
-  const listed = `${plugin.slice(0, LISTED).join(', ')}${plugin.length > LISTED ? ` и ещё ${plugin.length - LISTED}` : ''}`
+export function versionProblem({ before, after }) {
   const [old, next] = [parts(before), parts(after)]
-  if (!old || !next) return `version ${!next ? after : before} не semver (x.y.z)`
-  if (after === before) return `изменены файлы плагина (${listed}), а version осталась ${after} — поднимите в .claude-plugin/plugin.json`
-  return greater(next, old) ? null : `изменены файлы плагина (${listed}), а version ${after} не больше ${before}`
+  if (!next) return `version ${after} не semver (x.y.z)`
+  if (old && compare(next, old) < 0) return `version ${after} меньше ${before}`
+  return null
+}
+
+export function nextVersion({ changed, before, after, labels = [] }) {
+  if (!changed.some(path => PLUGIN_PATHS.some(prefix => path.startsWith(prefix)))) return null
+  if (after !== before) return { version: after, bump: false }
+  const kind = BUMPS.find(name => labels.includes(name)) ?? 'patch'
+  const [major, minor, patch] = parts(before)
+  const version = kind === 'major' ? `${major + 1}.0.0` : kind === 'minor' ? `${major}.${minor + 1}.0` : `${major}.${minor}.${patch + 1}`
+  return { version, bump: true }
 }

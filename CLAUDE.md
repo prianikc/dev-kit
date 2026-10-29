@@ -20,6 +20,7 @@
 ## Проверка
 
 - Тесты: `node --test 'mod/**/*.test.ts' '.github/scripts/*.test.mjs'`. Валидация: `claude plugin validate .`.
-- Каждый пуш в `main`, меняющий плагин, поднимает `version` в `.claude-plugin/plugin.json`.
-- CI (`.github/workflows/ci.yml`) на PR и пуш в `main`: тесты, валидация, проверка поднятия `version`
-  (`.github/scripts/check-version.mjs`). После пуша в `main` с новой `version` ставит тег `vX.Y.Z` и GitHub Release.
+- `version` в `.claude-plugin/plugin.json` поднимает CI после мержа в `main`, если менялись файлы плагина: patch, а с
+  меткой PR `minor` / `major` — их. Вручную в PR — только когда нужна своя; уменьшать нельзя.
+- CI (`.github/workflows/ci.yml`): на PR и пуш в `main` — тесты, валидация, проверка `version`; после пуша в `main` —
+  коммит новой `version` (`.github/scripts/release-version.mjs`), тег `vX.Y.Z` и GitHub Release.

@@ -29,17 +29,39 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: read
+    concurrency:
+      group: release
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Тег и релиз новой версии
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Версия
+        id: version
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="v$(jq -r .version .claude-plugin/plugin.json)"
-          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+          export LABELS=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '[.[].labels[].name] | join(",")')
+          node .github/scripts/release-version.mjs "${{ github.event.before }}"
+      - name: Коммит версии
+        if: steps.version.outputs.bump == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "dev-kit ${{ steps.version.outputs.version }}"
+          git push origin HEAD:main
+      - name: Тег и релиз
+        if: steps.version.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v${{ steps.version.outputs.version }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
             echo "$tag уже есть — релиз не нужен"
             exit 0
           fi
-          gh release create "$tag" --target "$GITHUB_SHA" --title "dev-kit ${tag#v}" --generate-notes
+          gh release create "$tag" --target "$(git rev-parse HEAD)" --title "dev-kit ${tag#v}" --generate-notes
