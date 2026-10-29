@@ -8,7 +8,7 @@
 | `hooks/hooks.json` | подключает мод `mod/register.ts` |
 | `mod/register.ts` | учёт файлов сессии (Edit/Write) и их список в промпте `/commit` |
 | `mod/session.ts` | чистые функции учёта |
-| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `confl`) и скиллы процесса из superpowers (`NOTICE.md`) |
+| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `cleanup`, `confl`) и скиллы процесса из superpowers (`NOTICE.md`) |
 
 ## Правила
 
