@@ -1,20 +1,25 @@
 # dev-kit
 
-Личный плагин Claude Code: git-команды и скиллы процесса разработки. Дополняет review-kit, не зависит от него.
+Личный плагин Claude Code: git-команды, скиллы процесса разработки и расширения review-kit (Plannotator, вкладки Orca). Дополняет review-kit, не зависит от него.
 
 | Путь | Что это |
 |---|---|
 | `.claude-plugin/` | манифест (`plugin.json`: версия) и `marketplace.json` |
 | `hooks/hooks.json` | подключает мод `mod/register.ts` |
-| `mod/register.ts` | учёт файлов сессии (Edit/Write) и их список в промпте `/commit` |
+| `mod/register.ts` | учёт файлов сессии (Edit/Write) и их список в промпте `/commit`; инструменты `plannotator_open`, `orca_open`; закрытие осиротевших вкладок Orca на старте сессии |
 | `mod/session.ts` | чистые функции учёта |
-| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `cleanup`, `confl`) и скиллы процесса из superpowers (`NOTICE.md`) |
+| `mod/git.ts` | `mainRoot` (основное дерево), `projectRoot` (текущее) |
+| `mod/plannotator.ts`, `mod/plannotator-run.ts` | Plannotator: аннотации и разбор решения; запуск, ожидание, итог в `.review-kit/run/<N>/ext/plannotator/` |
+| `mod/orca.ts`, `mod/tabs.ts` | Orca: разбор ответов CLI; бинарь, открытие и закрытие вкладок |
+| `mod/testing/` | фейковый движок и git во временной папке |
+| `skills/` | git-команды (`commit`, `push`, `merge`, `gsync`, `main`, `cleanup`, `confl`), `pr-tabs`, расширения review-kit (`plannotator-publish`, `plannotator-fix`) и скиллы процесса из superpowers (`NOTICE.md`) |
 
 ## Правила
 
 - Всё, что видит пользователь, — на русском; тексты скиллов — на английском.
-- Ссылки между скиллами — `dev-kit:<скилл>`; на review-kit — только через его публичные скиллы и конфиг
-  (`.claude/review-kit.local.json` → `manualCommitCommands`), без знания его внутреннего состояния.
+- Ссылки между скиллами — `dev-kit:<скилл>`; на review-kit — только через его точки расширения (раздел «Точки
+  расширения» в его `CLAUDE.md`): инструменты `review_worktree`, `review_publish` с `source: "ext/<имя>"`, файлы прогона
+  `.review-kit/run/<N>/` только на чтение, свои файлы — в `ext/plannotator/`. Его состояние мода не читается.
 - TS в `mod/`: без точек с запятой, одинарные кавычки, константы `UPPER_CASE` в начале файла.
 
 ## Проверка
